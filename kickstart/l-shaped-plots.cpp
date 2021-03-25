@@ -29,7 +29,6 @@ void letsGO(int test) {
 
     vector<vector<vector<int> > > info(
         r + 1, vector<vector<int> >(c + 1, vector<int>(4)));
-    // info[r][c][3] up, down, right, left
 
     for (int i = 1; i <= r; i++) {
         for (int j = 1; j <= c; j++) {
