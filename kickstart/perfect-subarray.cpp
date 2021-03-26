@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define int long long 
+#define int long long
 #define pb push_back
 #define F first
 #define S second
