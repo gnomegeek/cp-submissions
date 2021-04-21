@@ -1,3 +1,16 @@
+/* 
+    Common Techniques:
+    - Two Pointers
+    - Binary Search
+    - DP
+    - Graph
+    - Bitmasking
+    - Divide and Conquer
+    - Recursion
+
+    Think Think Think !!!!
+*/
+
 #include <bits/stdc++.h>
 
 #include <ext/pb_ds/assoc_container.hpp>
@@ -17,15 +30,15 @@ typedef tree<int, null_type, less<int>, rb_tree_tag,
              tree_order_statistics_node_update>
     wowset;
 
-const int maxn = 2e5 + 100;
-const int linf = 1000000000000000000LL;
-const int mod = 1000000007LL;
+const int INF = 1e18;
+const int mod = 1e9 + 7;
 const int inf = INT_MAX;
 const int modd = 998244353;
 const string yess = "YES";
 const string noo = "NO";
 int dx[] = {0, 0, 1, -1};
 int dy[] = {1, -1, 0, 0};
+const int maxn = 2e5 + 100;
 
 int gcd(int a, int b) { return b == 0 ? a : gcd(b, a % b); }
 
@@ -46,57 +59,52 @@ int mod_div(int a, int b) { return a * fastexpo(b, mod - 2) % mod; }
 
 bool cases = 0;
 
-int n, m;
-vector<vector<pii> > graph;
-vector<int> vis;
-vector<int> dis;
-multiset<pii> xx;
+vector<int> graph[100002];
+vector<int> vis(100002, 0);
+vector<int> toposort;
 
-void dijkstra() {
-    for (int i = 0; i <= n; i++) dis[i] = linf;
+set<int> pathcheck;
 
-    dis[1] = 0;
-
-    for (int i = 1; i <= n; i++) xx.insert({dis[i], i});
-    while (!xx.empty()) {
-        pii cur = *xx.begin();
-
-        xx.erase(xx.begin());
-
-        vis[cur.S] = 1;
-
-        for (auto nbr : graph[cur.S]) {
-            if (!vis[nbr.F]) {
-                auto itr = xx.find({dis[nbr.F], nbr.F});
-
-                dis[nbr.F] = min(dis[nbr.F], cur.F + nbr.S);
-
-                xx.erase(itr);
-
-                xx.insert({dis[nbr.F], nbr.F});
+void dfs(int i) {
+    vis[i] = 1;
+    pathcheck.insert(i);
+    for (int j : graph[i]) {
+        if (!vis[j]) {
+            dfs(j);
+        } else {
+            if (pathcheck.find(j) != pathcheck.end()) {
+                cout << "IMPOSSIBLE" << endl;
+                exit(0);
             }
         }
     }
+    pathcheck.erase(pathcheck.find(i));
+    toposort.pb(i);
 }
 
 void letsGO(int test) {
+    int n, m;
+
     cin >> n >> m;
 
-    graph.resize(n + 1, vector<pii>());
-
     for (int i = 0; i < m; i++) {
-        int a, b, c;
-        cin >> a >> b >> c;
-        graph[a].pb({b, c});
+        int a, b;
+        cin >> a >> b;
+        graph[a].pb(b);
     }
 
-    vis.resize(n + 1, 0);
-    dis.resize(n + 1);
+    for (int i = 1; i <= n; i++) {
+        if (!vis[i]) {
+            dfs(i);
+        }
+    }
 
-    
-    dijkstra();
+    reverse(all(toposort));
 
-    for (int i = 1; i <= n; i++) cout << dis[i] << " ";
+    for (int i : toposort) {
+        cout << i << " ";
+    }
+
     cout << endl;
 }
 

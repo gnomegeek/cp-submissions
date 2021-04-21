@@ -1,3 +1,16 @@
+/* 
+    Common Techniques:
+    - Two Pointers
+    - Binary Search
+    - DP
+    - Graph
+    - Bitmasking
+    - Divide and Conquer
+    - Recursion
+ 
+    Think Think Think !!!!
+*/
+
 #include <bits/stdc++.h>
 
 #include <ext/pb_ds/assoc_container.hpp>
@@ -17,15 +30,15 @@ typedef tree<int, null_type, less<int>, rb_tree_tag,
              tree_order_statistics_node_update>
     wowset;
 
-const int maxn = 2e5 + 100;
-const int linf = 1000000000000000000LL;
-const int mod = 1000000007LL;
+const int INF = 1e18;
+const int mod = 1e9 + 7;
 const int inf = INT_MAX;
 const int modd = 998244353;
 const string yess = "YES";
 const string noo = "NO";
 int dx[] = {0, 0, 1, -1};
 int dy[] = {1, -1, 0, 0};
+const int maxn = 2e5 + 100;
 
 int gcd(int a, int b) { return b == 0 ? a : gcd(b, a % b); }
 
@@ -46,57 +59,60 @@ int mod_div(int a, int b) { return a * fastexpo(b, mod - 2) % mod; }
 
 bool cases = 0;
 
-int n, m;
-vector<vector<pii> > graph;
-vector<int> vis;
-vector<int> dis;
-multiset<pii> xx;
+void letsGO(int test) {
+    int n, m;
+    cin >> n >> m;
+    vector<int> parent(n + 1, -1);
 
-void dijkstra() {
-    for (int i = 0; i <= n; i++) dis[i] = linf;
+    vector<int> edges[m];
+
+    vector<int> dis(n + 1, INF);
 
     dis[1] = 0;
-
-    for (int i = 1; i <= n; i++) xx.insert({dis[i], i});
-    while (!xx.empty()) {
-        pii cur = *xx.begin();
-
-        xx.erase(xx.begin());
-
-        vis[cur.S] = 1;
-
-        for (auto nbr : graph[cur.S]) {
-            if (!vis[nbr.F]) {
-                auto itr = xx.find({dis[nbr.F], nbr.F});
-
-                dis[nbr.F] = min(dis[nbr.F], cur.F + nbr.S);
-
-                xx.erase(itr);
-
-                xx.insert({dis[nbr.F], nbr.F});
-            }
-        }
-    }
-}
-
-void letsGO(int test) {
-    cin >> n >> m;
-
-    graph.resize(n + 1, vector<pii>());
 
     for (int i = 0; i < m; i++) {
         int a, b, c;
         cin >> a >> b >> c;
-        graph[a].pb({b, c});
+        edges[i] = {a, b, c};
+    }
+    int x;
+    for (int i = 0; i < n; i++) {
+        x = -1;
+        for (int j = 0; j < m; j++) {
+            int u = edges[j][0], v = edges[j][1], wt = edges[j][2];
+            // if (dis[u] < INF) {
+            if (dis[u] + wt < dis[v]) {
+                dis[v] = max(-INF, dis[u] + wt);
+                parent[v] = u;
+                x = v;
+                // }
+            }
+        }
     }
 
-    vis.resize(n + 1, 0);
-    dis.resize(n + 1);
+    if (x == -1) {
+        cout << noo << endl;
+        return;
+    }
 
-    
-    dijkstra();
+    for (int i = 0; i < n; i++)
+        x = parent[x];
 
-    for (int i = 1; i <= n; i++) cout << dis[i] << " ";
+    int cur = x;
+
+    vector<int> path;
+    while (cur != x || path.size() <= 1) {
+        path.pb(cur);
+        cur = parent[cur];
+    }
+
+    path.pb(cur);
+
+    reverse(all(path));
+
+    cout << yess << endl;
+
+    for (auto i : path) cout << i << " ";
     cout << endl;
 }
 

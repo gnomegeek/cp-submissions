@@ -44,60 +44,17 @@ int fastexpo(int base, int exp) {
 
 int mod_div(int a, int b) { return a * fastexpo(b, mod - 2) % mod; }
 
-bool cases = 0;
-
-int n, m;
-vector<vector<pii> > graph;
-vector<int> vis;
-vector<int> dis;
-multiset<pii> xx;
-
-void dijkstra() {
-    for (int i = 0; i <= n; i++) dis[i] = linf;
-
-    dis[1] = 0;
-
-    for (int i = 1; i <= n; i++) xx.insert({dis[i], i});
-    while (!xx.empty()) {
-        pii cur = *xx.begin();
-
-        xx.erase(xx.begin());
-
-        vis[cur.S] = 1;
-
-        for (auto nbr : graph[cur.S]) {
-            if (!vis[nbr.F]) {
-                auto itr = xx.find({dis[nbr.F], nbr.F});
-
-                dis[nbr.F] = min(dis[nbr.F], cur.F + nbr.S);
-
-                xx.erase(itr);
-
-                xx.insert({dis[nbr.F], nbr.F});
-            }
-        }
-    }
-}
+bool cases = 1;
 
 void letsGO(int test) {
-    cin >> n >> m;
+    int a, b;
+    cin >> a >> b;
 
-    graph.resize(n + 1, vector<pii>());
-
-    for (int i = 0; i < m; i++) {
-        int a, b, c;
-        cin >> a >> b >> c;
-        graph[a].pb({b, c});
+    if ((2 * a - b) % 3 == 0 and (2 * b - a) % 3 == 0 and 2 * a >= b and 2 * b >= a) {
+        cout << yess << endl;
+    } else {
+        cout << noo << endl;
     }
-
-    vis.resize(n + 1, 0);
-    dis.resize(n + 1);
-
-    
-    dijkstra();
-
-    for (int i = 1; i <= n; i++) cout << dis[i] << " ";
-    cout << endl;
 }
 
 signed main() {
@@ -110,4 +67,3 @@ signed main() {
     int TT = 1, cnt = 0;
     if (cases) cin >> TT;
     while (TT--) letsGO(++cnt);
-}

@@ -1,3 +1,16 @@
+/* 
+    Common Techniques:
+    - Two Pointers
+    - Binary Search
+    - DP
+    - Graph
+    - Bitmasking
+    - Divide and Conquer
+    - Recursion
+ 
+    Think Think Think !!!!
+*/
+
 #include <bits/stdc++.h>
 
 #include <ext/pb_ds/assoc_container.hpp>
@@ -17,15 +30,15 @@ typedef tree<int, null_type, less<int>, rb_tree_tag,
              tree_order_statistics_node_update>
     wowset;
 
-const int maxn = 2e5 + 100;
-const int linf = 1000000000000000000LL;
-const int mod = 1000000007LL;
+const int INF = 1e17;
+const int mod = 1e9 + 7;
 const int inf = INT_MAX;
 const int modd = 998244353;
 const string yess = "YES";
 const string noo = "NO";
 int dx[] = {0, 0, 1, -1};
 int dy[] = {1, -1, 0, 0};
+const int maxn = 2e5 + 100;
 
 int gcd(int a, int b) { return b == 0 ? a : gcd(b, a % b); }
 
@@ -46,58 +59,55 @@ int mod_div(int a, int b) { return a * fastexpo(b, mod - 2) % mod; }
 
 bool cases = 0;
 
-int n, m;
-vector<vector<pii> > graph;
-vector<int> vis;
-vector<int> dis;
-multiset<pii> xx;
+vector<int> bellman_ford(int n, vector<vector<int>>& edges, int src) {
+    vector<int> dist(n + 1, INF);
+    dist[src] = 0;
+    for (int i = 1; i < n; i++) {
+        for (auto edge : edges) {
+            int u = edge[0], v = edge[1], wt = edge[2];
+            if (dist[u] == INF) continue;
+            if (dist[u] + wt < dist[v]) dist[v] = dist[u] + wt;
+            dist[v] = max(dist[v], -INF);
+        }
+    }
 
-void dijkstra() {
-    for (int i = 0; i <= n; i++) dis[i] = linf;
-
-    dis[1] = 0;
-
-    for (int i = 1; i <= n; i++) xx.insert({dis[i], i});
-    while (!xx.empty()) {
-        pii cur = *xx.begin();
-
-        xx.erase(xx.begin());
-
-        vis[cur.S] = 1;
-
-        for (auto nbr : graph[cur.S]) {
-            if (!vis[nbr.F]) {
-                auto itr = xx.find({dis[nbr.F], nbr.F});
-
-                dis[nbr.F] = min(dis[nbr.F], cur.F + nbr.S);
-
-                xx.erase(itr);
-
-                xx.insert({dis[nbr.F], nbr.F});
+    for (int i = 1; i < n; i++) {
+        for (auto edge : edges) {
+            int u = edge[0], v = edge[1], wt = edge[2];
+            if (dist[u] == INF) continue;
+            if (dist[u] + wt < dist[v]) {
+                dist[v] = -INF;
             }
         }
     }
+
+    return dist;
 }
 
 void letsGO(int test) {
+    int n, m;
     cin >> n >> m;
 
-    graph.resize(n + 1, vector<pii>());
+    vector<vector<int>> edges;
+    vector<vector<int>> graph(n + 1);
 
     for (int i = 0; i < m; i++) {
-        int a, b, c;
-        cin >> a >> b >> c;
-        graph[a].pb({b, c});
+        int u, v, wt;
+        cin >> u >> v >> wt;
+        wt = -wt;
+        graph[u].pb(v);
+        edges.pb({u, v, wt});
     }
 
-    vis.resize(n + 1, 0);
-    dis.resize(n + 1);
+    vector<int> dist = bellman_ford(n, edges, 1);
 
-    
-    dijkstra();
+    if (dist[n] == -INF) {
+        cout << -1 << endl;
+        return;
+    }
 
-    for (int i = 1; i <= n; i++) cout << dis[i] << " ";
-    cout << endl;
+    cout << -1 * dist[n] << endl;
+    return;
 }
 
 signed main() {
